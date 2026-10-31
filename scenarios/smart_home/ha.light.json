@@ -1,0 +1,50 @@
+{
+  "format_version": 2,
+  "id": "ha.light",
+  "version": "1.0.0",
+  "category": "smart_home",
+  "title": {"ru": "Свет через Home Assistant", "en": "Light via Home Assistant"},
+  "description": {
+    "ru": "«включи свет на кухне» → ha.call_service light.turn_on (entity_id light.kitchen по таблице комнат)"
+  },
+  "priority": 70,
+  "triggers": [
+    {
+      "kind": "template",
+      "sentences": ["({power}; свет) (в|на|во) {room}"],
+      "lists": {
+        "power": {"values": [
+          {"in": "включи", "out": "turn_on"},
+          {"in": "зажги", "out": "turn_on"},
+          {"in": "включить", "out": "turn_on"},
+          {"in": "выключи", "out": "turn_off"},
+          {"in": "потуши", "out": "turn_off"},
+          {"in": "выключить", "out": "turn_off"}
+        ]}
+      }
+    }
+  ],
+  "tables": {
+    "room_entity": {
+      "кухня": "kitchen",
+      "спальня": "bedroom",
+      "гостиная": "living_room",
+      "ванная": "bathroom",
+      "коридор": "hallway",
+      "детская": "nursery"
+    },
+    "service_text": {"turn_on": "включён", "turn_off": "выключен"}
+  },
+  "flow": [
+    {"id": "call", "op": "action", "ref": "ha.call_service",
+     "arguments": {"domain": "light", "service": "{{slots.power}}",
+                   "entity_id": "light.{{slots.room | lookup:room_entity}}"},
+     "on_failure": "unavailable"},
+    {"id": "say", "op": "compose",
+     "reply": {"text": "Свет ({{slots.room}}) {{slots.power | lookup:service_text}}."}},
+    {"id": "done", "op": "finish"},
+    {"id": "unavailable", "op": "compose",
+     "reply": {"text": "Home Assistant недоступен — проверьте адрес и токен в настройках расширения «Home Assistant»."}},
+    {"id": "stop", "op": "finish"}
+  ]
+}
