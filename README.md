@@ -1,5 +1,7 @@
 # Home Assistant — расширение эмулятора Алисы
 
+Обсуждение и вопросы — в Telegram-группе [t.me/yandex_iot](https://t.me/yandex_iot).
+
 Расширение подключает [Home Assistant](https://www.home-assistant.io/) к эмулятору
 сервера Алисы частями — каждую можно включить отдельно:
 
